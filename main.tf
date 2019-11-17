@@ -10,11 +10,17 @@ resource "aws_autoscaling_group" "ecs" {
   }
 }
 
+resource "aws_iam_instance_profile" "ecs_instance" {
+  name = "ecs_instance_profile"
+  role = "AmazonEC2ContainerServiceforEC2Role"
+}
+
 resource "aws_launch_configuration" "ecs_instance" {
-  name          = "ecs-instance-${var.cluster_name}"
-  image_id      = "${var.ecs_ami}"
-  instance_type = "${var.ecs_instance_type}"
-  key_name      = "${var.ecs_instance_key}"
+  name                 = "ecs-instance-${var.cluster_name}"
+  image_id             = "${var.ecs_ami}"
+  instance_type        = "${var.ecs_instance_type}"
+  key_name             = "${var.ecs_instance_key}"
+  iam_instance_profile = "${aws_iam_instance_profile.ecs_instance.name}"
 
   user_data = <<EOF
   #!/bin/bash
