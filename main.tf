@@ -3,6 +3,7 @@ resource "aws_autoscaling_group" "ecs" {
   min_size = "${var.cluster_min_size}"
   max_size = "${var.cluster_max_size}"
   vpc_zone_identifier = "${var.subnets}"
+  launch_configuration = "${aws_launch_configuration.ecs_instance.name}"
 
   lifecycle {
     create_before_destroy = true
@@ -33,7 +34,7 @@ resource "aws_security_group" "cluster_instance" {
   ingress {
     from_port = "0"
     to_port = "0"
-    protocol = "all"
+    protocol = "-1"
     self = true
   }
 }
