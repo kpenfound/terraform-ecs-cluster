@@ -1,8 +1,8 @@
 resource "aws_autoscaling_group" "ecs" {
-  name = "ecs-${var.cluster_name}-asg"
-  min_size = "${var.cluster_min_size}"
-  max_size = "${var.cluster_max_size}"
-  vpc_zone_identifier = "${var.subnets}"
+  name                 = "ecs-${var.cluster_name}-asg"
+  min_size             = "${var.cluster_min_size}"
+  max_size             = "${var.cluster_max_size}"
+  vpc_zone_identifier  = "${var.subnets}"
   launch_configuration = "${aws_launch_configuration.ecs_instance.name}"
 
   lifecycle {
@@ -11,11 +11,16 @@ resource "aws_autoscaling_group" "ecs" {
 }
 
 resource "aws_launch_configuration" "ecs_instance" {
-  name = "ecs-instance-${var.cluster_name}"
-  image_id = "${var.ecs_ami}"
+  name          = "ecs-instance-${var.cluster_name}"
+  image_id      = "${var.ecs_ami}"
   instance_type = "${var.ecs_instance_type}"
-  key_name = "${var.ecs_instance_key}"
-  user_data = "echo ECS_CLUSTER=${var.cluster_name} >> /etc/ecs/ecs.config"
+  key_name      = "${var.ecs_instance_key}"
+
+  user_data = <<EOF
+  #!/bin/bash
+  echo ECS_CLUSTER=${var.cluster_name} >> /etc/ecs/ecs.config
+  EOF
+
   security_groups = ["${aws_security_group.cluster_instance.id}"]
 
   lifecycle {
@@ -28,13 +33,13 @@ resource "aws_ecs_cluster" "cluster" {
 }
 
 resource "aws_security_group" "cluster_instance" {
-  name = "ecs-cluster-${var.cluster_name}"
+  name   = "ecs-cluster-${var.cluster_name}"
   vpc_id = "${var.vpc_id}"
 
   ingress {
     from_port = "0"
-    to_port = "0"
-    protocol = "-1"
-    self = true
+    to_port   = "0"
+    protocol  = "-1"
+    self      = true
   }
 }
