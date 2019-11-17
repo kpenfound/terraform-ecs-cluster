@@ -38,7 +38,7 @@ EOF
 }
 
 resource "aws_iam_policy" "instance_policy" {
-  name        = "ecs-instance-polciy"
+  name        = "ecs-instance-policy"
   description = "ECS Instance Policy"
 
   policy = <<EOF
@@ -108,5 +108,12 @@ resource "aws_security_group" "cluster_instance" {
     to_port   = "0"
     protocol  = "-1"
     self      = true
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
   }
 }
