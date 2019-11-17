@@ -12,7 +12,40 @@ resource "aws_autoscaling_group" "ecs" {
 
 resource "aws_iam_instance_profile" "ecs_instance" {
   name = "ecs_instance_profile"
-  role = "AmazonEC2ContainerServiceforEC2Role"
+  role = "${aws_iam_role.ecs_instance_role.name}"
+}
+
+resource "aws_iam_role" "ecs_instance_role" {
+  name = "ecs_instance_role"
+
+  assume_role_policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "ec2:DescribeTags",
+                "ecs:CreateCluster",
+                "ecs:DeregisterContainerInstance",
+                "ecs:DiscoverPollEndpoint",
+                "ecs:Poll",
+                "ecs:RegisterContainerInstance",
+                "ecs:StartTelemetrySession",
+                "ecs:UpdateContainerInstancesState",
+                "ecs:Submit*",
+                "ecr:GetAuthorizationToken",
+                "ecr:BatchCheckLayerAvailability",
+                "ecr:GetDownloadUrlForLayer",
+                "ecr:BatchGetImage",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+            ],
+            "Resource": "*"
+        }
+    ]
+}
+EOF
 }
 
 resource "aws_launch_configuration" "ecs_instance" {
