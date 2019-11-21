@@ -19,7 +19,7 @@ resource "aws_key_pair" "cluster_key" {
 }
 
 module "ecs_cluster" {
-  source = "github.com/kpenfound/ecs-cluster?ref=1.0.0"
+  source = "github.com/kpenfound/ecs-cluster?ref=1.0.1"
 
   region           = "${var.region}"
   ecs_ami          = "${var.ecs_ami}"
