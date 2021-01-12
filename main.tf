@@ -110,6 +110,13 @@ resource "aws_security_group" "cluster_instance" {
     self      = true
   }
 
+  ingress {
+    from_port       = "0"
+    to_port         = "0"
+    protocol        = "-1"
+    security_groups = var.allowed_sgs
+  }
+
   egress {
     from_port   = 0
     to_port     = 0
