@@ -35,3 +35,8 @@ variable vpc_id {
 variable subnets {
   description = "List of subnet ids to deploy the ECS cluster in"
 }
+
+variable allowed_sgs {
+  description = "List of security groups to allow for ecs cluster ingress"
+  default     = []
+}
