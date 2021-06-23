@@ -103,9 +103,10 @@ resource "aws_launch_configuration" "ecs_instance" {
   iam_instance_profile = aws_iam_instance_profile.ecs_instance.name
 
   user_data = <<EOF
-  #!/bin/bash
-  echo ECS_CLUSTER=${var.cluster_name} >> /etc/ecs/ecs.config
-  EOF
+#!/bin/bash
+echo ECS_CLUSTER=${var.cluster_name} >> /etc/ecs/ecs.config
+${var.extra_user_data}  
+EOF
 
   security_groups = [aws_security_group.cluster_instance.id]
 

@@ -40,3 +40,7 @@ variable "allowed_sgs" {
   description = "List of security groups to allow for ecs cluster ingress"
   default     = []
 }
+variable "extra_user_data" {
+  description = "Additional bash for the user_data script on the cluster instances"
+  default     = ""
+}
