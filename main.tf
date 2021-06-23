@@ -1,5 +1,24 @@
+terraform {
+  required_providers {
+    aws = {
+      source  = "hashicorp/aws"
+      version = "~> 3.0"
+    }
+    random = {
+      source  = "hashicorp/random"
+      version = "3.1.0"
+    }
+  }
+}
+
+resource "random_pet" "cluster" {
+  keepers = {
+    cluster = var.cluster_name
+  }
+}
+
 resource "aws_autoscaling_group" "ecs" {
-  name                 = "ecs-${var.cluster_name}-asg"
+  name                 = "ecs-${var.cluster_name}-asg-${random_pet.cluster.id}"
   min_size             = var.cluster_min_size
   max_size             = var.cluster_max_size
   vpc_zone_identifier  = var.subnets
@@ -11,12 +30,12 @@ resource "aws_autoscaling_group" "ecs" {
 }
 
 resource "aws_iam_instance_profile" "ecs_instance" {
-  name = "ecs_instance_profile"
+  name = "ecs_instance_profile-${random_pet.cluster.id}"
   role = aws_iam_role.ecs_instance_role.name
 }
 
 resource "aws_iam_role" "ecs_instance_role" {
-  name = "ecs_instance_role"
+  name = "ecs_instance_role-${random_pet.cluster.id}"
 
   assume_role_policy = <<EOF
 {
@@ -38,7 +57,7 @@ EOF
 }
 
 resource "aws_iam_policy" "instance_policy" {
-  name        = "ecs-instance-policy"
+  name        = "ecs-instance-policy-${random_pet.cluster.id}"
   description = "ECS Instance Policy"
 
   policy = <<EOF
@@ -77,7 +96,7 @@ resource "aws_iam_role_policy_attachment" "instance_policy_attach" {
 }
 
 resource "aws_launch_configuration" "ecs_instance" {
-  name                 = "ecs-instance-${var.cluster_name}"
+  name                 = "ecs-instance-${var.cluster_name}-${random_pet.cluster.id}"
   image_id             = var.ecs_ami
   instance_type        = var.ecs_instance_type
   key_name             = var.ecs_instance_key
@@ -100,7 +119,7 @@ resource "aws_ecs_cluster" "cluster" {
 }
 
 resource "aws_security_group" "cluster_instance" {
-  name   = "ecs-cluster-${var.cluster_name}"
+  name   = "ecs-cluster-${var.cluster_name}-${random_pet.cluster.id}"
   vpc_id = var.vpc_id
 
   ingress {
