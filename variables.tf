@@ -44,3 +44,7 @@ variable "extra_user_data" {
   description = "Additional bash for the user_data script on the cluster instances"
   default     = ""
 }
+variable "extra_instance_policy_actions" {
+  description = "Additional instance_policy actions for the cluster instances"
+  default     = ""
+}

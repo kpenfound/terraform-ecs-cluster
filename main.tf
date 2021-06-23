@@ -81,6 +81,7 @@ resource "aws_iam_policy" "instance_policy" {
                 "ecr:GetDownloadUrlForLayer",
                 "ecr:BatchGetImage",
                 "logs:CreateLogStream",
+		${var.extra_instance_policy_actions}
                 "logs:PutLogEvents"
             ],
             "Resource": "*"
